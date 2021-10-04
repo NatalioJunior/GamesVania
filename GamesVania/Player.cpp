@@ -1,23 +1,13 @@
-/**********************************************************************************
-// Player (Código Fonte)
-// 
-// Criação:     20 Abr 2012
-// Atualização: 27 Set 2021
-// Compilador:  Visual C++ 2019
-//
-// Descrição:   Define uma classe para o jogador 
-//
-**********************************************************************************/
 
 #include "Player.h"
-#include "GravityGuy.h"
+#include "LevelMaster.h"
 #include "Platform.h"
+#include "Background.h"
 
 // ---------------------------------------------------------------------------------
 
 Player::Player()
 {
-    backg = nullptr;
     tileset = new TileSet("Resources/GravityGuy.png", 32, 48, 5, 10);
     anim = new Animation(tileset, 0.120f, true);
 
@@ -36,11 +26,13 @@ Player::Player()
         tileset->TileHeight() / 2.0f));
     
     // inicializa estado do player
-    gravity = NORMAL;  
+    gravity = NORMAL;
+    direction = LEFT;
+    movement = STILL;
     level = 0;
 
     // posição inicial
-    MoveTo(window->CenterX(), 24.0f, Layer::FRONT);
+    MoveTo(window->CenterX(), window->CenterY(), Layer::FRONT);
 }
 
 // ---------------------------------------------------------------------------------
@@ -92,7 +84,7 @@ void Player::OnCollision(Object * obj)
         gravity = !gravity;
 
         // toca efeito sonoro
-        GravityGuy::audio->Play(TRANSITION);
+        LevelMaster::audio->Play(TRANSITION);
 
         // tira player da plataforma para evitar 
         // detecção de colisão no quadro seguinte
@@ -107,7 +99,7 @@ void Player::OnCollision(Object * obj)
 
 void Player::Update()
 {
-    if (backg->Right()) {
+    if (Background::Right()) {
         if (window->KeyDown(VK_RIGHT)) {
             Translate(130.0f * gameTime, 0);
         }
@@ -117,7 +109,7 @@ void Player::Update()
         }
     }
     
-    if (backg->Left()) {
+    if (Background::Left()) {
         if (window->KeyDown(VK_RIGHT)) {
             Translate(130.0f * gameTime, 0);
             if (x >= window->CenterX()) Background::stoped = false;

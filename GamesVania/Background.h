@@ -1,16 +1,6 @@
-/**********************************************************************************
-// Background (Arquivo de Cabeçalho)
-// 
-// Criação:     21 Abr 2012
-// Atualização: 02 Set 2021
-// Compilador:  Visual C++ 2019
-//
-// Descrição:   Plano de fundo do jogo
-//
-**********************************************************************************/
 
-#ifndef _GRAVITYGUY_BACKGROUND_H_
-#define _GRAVITYGUY_BACKGROUND_H_
+#ifndef _GAMESVANIA_BACKGROUND_H_
+#define _GAMESVANIA_BACKGROUND_H_
 
 // ---------------------------------------------------------------------------------
 
@@ -23,25 +13,22 @@
 class Background : public Object
 {
 private:
-    float xRight, xLeft, xF;            // posição horizontal dos sprites
-    Image * imgF;                       // imagem de fundo frontal
-    Image * imgB;                       // imagem de fundo traseira    
+    static float xRight, xLeft;         // posição horizontal extrema dos sprites
+    float xF;                           // posição do eixo X;
 
-    Sprite * sky;                       // fundo estático
-    Sprite * backgF1;                   // pano de fundo dinâmico (frontal 1)
-    Sprite * backgF2;                   // pano de fundo dinâmico (frontal 2)
-    Sprite * backgB1;                   // pano de fundo dinâmico (traseiro 1)
-    Sprite * backgB2;                   // pano de fundo dinâmico (traseiro 2)
+    Image   * imgF;                     // imagem de fundo
+    Sprite  * sky;                      // fundo estático
+    Sprite  * backgF1;                  // pano de fundo dinâmico
 
     Color color;                        // cor do pano de fundo
 
 public:
-    static bool stoped;
+    static bool stoped;                 // quando a tela para na parte extrema esquerda ou extrema direita;
     Background(Color tint);             // construtor
     ~Background();                      // destrutor
 
-    bool Right();
-    bool Left();
+    static bool Right();
+    static bool Left();
 
     void Update();                      // atualização do objeto
     void Draw();                        // desenho do objeto

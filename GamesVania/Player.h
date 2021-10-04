@@ -1,16 +1,6 @@
-/**********************************************************************************
-// Player (Arquivo de Cabeçalho)
-// 
-// Criação:     20 Abr 2012
-// Atualização: 27 Set 2021
-// Compilador:  Visual C++ 2019
-//
-// Descrição:   Define uma classe para o jogador 
-//
-**********************************************************************************/
 
-#ifndef _GRAVITYGUY_PLAYER_H_
-#define _GRAVITYGUY_PLAYER_H_
+#ifndef _GAMESVANIA_PLAYER_H_
+#define _GAMESVANIA_PLAYER_H_
 
 // ---------------------------------------------------------------------------------
 // Inclusões
@@ -18,11 +8,12 @@
 #include "Types.h"                      // tipos específicos da engine
 #include "Object.h"                     // interface de Object
 #include "Animation.h"                  // animação de sprites
-#include "Background.h"
 
 // ------------------------------------------------------------------------------
 
-enum Gravity {NORMAL,INVERTED};         // tipo da gravidade
+enum Direction  {LEFT, RIGHT};
+enum Movement   {STILL, WALKING, JUMPING, CROUCHED, HITING};
+enum Gravity    {NORMAL, INVERTED};
 
 // ---------------------------------------------------------------------------------
 
@@ -31,11 +22,13 @@ class Player : public Object
 private:
     TileSet   * tileset;                // folha de sprites do personagem
     Animation * anim;                   // animação do personagem
-    uint        gravity;                // gravidade atuando sobre o jogador
+    uint        movement;               // movimento que o player está realizando
+    uint        gravity;
     int         level;                  // nível finalizado
     
 public:
-    Background* backg;
+    uint        direction;              // direção que o player está seguindo
+
     Player();                           // construtor
     ~Player();                          // destrutor
 
