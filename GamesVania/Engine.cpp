@@ -116,52 +116,54 @@ int Engine::Loop()
     do
     {
         // testa se tem mensagem do windows para tratar
-        while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        
-        // -----------------------------------------------
-        // Pausa/Resume Jogo
-        // -----------------------------------------------
-
-        if (window->KeyPress(VK_PAUSE))
-        {
-            paused = !paused;
-
-            if (paused)
-                timer.Stop();
-            else
-                timer.Start();
-        }
-
-        // -----------------------------------------------
-
-        if (!paused)
-        {
-            // calcula o tempo do quadro
-            frameTime = FrameTime();
-
-            // atualização do jogo 
-            game->Update();
-
-            // limpa a tela para o próximo quadro
-            graphics->Clear();
-
-            // desenha o jogo
-            game->Draw();
-
-            // renderiza sprites
-            renderer->Render();
-
-            // apresenta o jogo na tela (troca backbuffer/frontbuffer)
-            graphics->Present();
-        }
         else
         {
-            // tela de pausa
-            game->OnPause();
+            // -----------------------------------------------
+            // Pausa/Resume Jogo
+            // -----------------------------------------------
+
+            if (window->KeyPress(VK_PAUSE))
+            {
+                paused = !paused;
+
+                if (paused)
+                    timer.Stop();
+                else
+                    timer.Start();
+            }
+
+            // -----------------------------------------------
+
+            if (!paused)
+            {
+                // calcula o tempo do quadro
+                frameTime = FrameTime();
+
+                // atualização do jogo 
+                game->Update();
+
+                // limpa a tela para o próximo quadro
+                graphics->Clear();
+
+                // desenha o jogo
+                game->Draw();
+
+                // renderiza sprites
+                renderer->Render();
+
+                // apresenta o jogo na tela (troca backbuffer/frontbuffer)
+                graphics->Present();
+            }
+            else
+            {
+                // tela de pausa
+                game->OnPause();
+            }
         }
 
     } while (msg.message != WM_QUIT);
