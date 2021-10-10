@@ -70,7 +70,7 @@ class Level1 : public LevelMaster
 {
 private:
     Background* backg = nullptr;    // pano de fundo animado
-    Scene* scene = nullptr;         // cena do nível
+    Scene* scene      = nullptr;    // cena do nível
 
 public:
 
@@ -86,7 +86,7 @@ class Level2 : public LevelMaster
 {
 private:
     Background* backg = nullptr;   // pano de fundo animado
-    Scene* scene;                  // cena do nível
+    Scene* scene      = nullptr;   // cena do nível
 
 public:
 

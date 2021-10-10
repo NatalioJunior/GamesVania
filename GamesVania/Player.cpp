@@ -3,6 +3,8 @@
 #include "LevelMaster.h"
 #include "Platform.h"
 #include "Background.h"
+#include "GamesVania.h"
+#include "HitBox.h"
 
 // ---------------------------------------------------------------------------------
 
@@ -32,7 +34,9 @@ Player::Player()
     level = 0;
 
     // posição inicial
-    MoveTo(window->CenterX(), window->CenterY(), Layer::FRONT);
+    MoveTo(32, window->CenterY() -225.0f, Layer::FRONT);
+
+    type = PLAYER;
 }
 
 // ---------------------------------------------------------------------------------
@@ -48,9 +52,13 @@ Player::~Player()
 void Player::Reset()
 {
     // volta ao estado inicial
-    MoveTo(window->CenterX(), 24.0f, Layer::FRONT);
-    gravity = NORMAL;
-    level = 0;
+    MoveTo(32, window->CenterY() - 225.0f, Layer::FRONT);
+    hiting = false;
+    jumping = false;
+    jumpTimer.Reset();
+    velY = 0;
+    //gravity = NORMAL;
+    //level = 0;
 }
 
 
@@ -58,76 +66,114 @@ void Player::Reset()
 
 void Player::OnCollision(Object * obj)
 {
-    if (obj->Type() == FINISH)
-    {
-        // chegou ao final do nível
-        level++;
+    if (obj->Type() == PLATFORM) {
+        Platform* p = (Platform*)obj;
+        if (!jumping) {
+            switch (p->PlatformType)
+            {
+            case PACMAN: 
+                if (((Bottom() - 2.0f) - p->Top() >= -15.5f && (Bottom() - 2.0f) - p->Top() <= 15.5f)) {
+                    MoveTo(x, p->Y() - 45.0f);
+                }
+                break;
+
+            case MARIO:
+                if (((Bottom()) - p->Top() >= -22.0f && (Bottom()) - p->Top() <= 22.0f)) {
+                    MoveTo(x, p->Y() - 42.5f);
+                }
+                break;
+
+            case TETRIS:
+                if (((Bottom()) - p->Top() >= -20.0f && (Bottom()) - p->Top() <= 20.0f)) {
+                    MoveTo(x, p->Y() - 46.8f);
+                }
+
+            }
+            if (!hiting) {
+                if (window->KeyDown(VK_DOWN)) {
+                    Translate(0, 130.0f * gameTime);
+                }
+                if (window->KeyPress(VK_UP)) {
+                    LevelMaster::audio->Play(TRANSITION);
+                    jumping = true;
+                    velY = -580.0f;
+                    jumpTimer.Start();
+                }
+            }
+        }
     }
-    else
-    {
-        // mantém personagem em cima da plataforma
-        if (gravity == NORMAL)
-            MoveTo(x, obj->Y() - 32);
-        //else
-        //    MoveTo(window->CenterX(), obj->Y() + 32);
+
+    if (window->KeyPress('O')) {
+        Background::stoped = true;
     }
 
-    // ----------------------------------------------------------
-    // Processa teclas pressionadas
-    // ----------------------------------------------------------
-    // jogador só pode alterar a gravidade enquanto estiver
-    // em cima de uma plataforma, não é possível a mudança no ar
-    // ----------------------------------------------------------
-
-    if (window->KeyPress(VK_SPACE))
-    {
-        gravity = !gravity;
-
-        // toca efeito sonoro
-        LevelMaster::audio->Play(TRANSITION);
-
-        // tira player da plataforma para evitar 
-        // detecção de colisão no quadro seguinte
-        if (gravity == NORMAL)
-            Translate(0, 12);
-        else
-            Translate(0 , -12);
-    }
 }
 
 // ---------------------------------------------------------------------------------
 
 void Player::Update()
 {
-    if (Background::Right()) {
+
+    if (!hiting) {
         if (window->KeyDown(VK_RIGHT)) {
-            Translate(130.0f * gameTime, 0);
+            if (!jumping) movement = WALKING;
+            direction = RIGHT;
         }
         if (window->KeyDown(VK_LEFT)) {
-            Translate(-130.0f * gameTime, 0);
-            if (x <= window->CenterX()) Background::stoped = false;
+            if (!jumping) movement = WALKING;
+            direction = LEFT;
+        }
+
+        if (Background::Right()) {
+            if (window->KeyDown(VK_RIGHT)) {
+                velX = 130.0f;
+                Translate(130.0f * gameTime, 0);
+            }
+            if (window->KeyDown(VK_LEFT)) {
+                velX = -130.0f;
+                Translate(-130.0f * gameTime, 0);
+                if (x <= window->CenterX()) Background::stoped = false;
+            }
+        }
+
+        if (Background::Left()) {
+            if (window->KeyDown(VK_RIGHT)) {
+                velX = 130.0f;
+                Translate(130.0f * gameTime, 0);
+                if (x >= window->CenterX()) Background::stoped = false;
+            }
+            if (window->KeyDown(VK_LEFT)) {
+                velX = -130.0f;
+                Translate(-130.0f * gameTime, 0);
+            }
+        }
+
+        if (window->KeyPress(VK_SPACE)) {
+            hiting = true;
+            HitBox* hitbox = new HitBox();
+            LevelMaster::scene->Add(hitbox, MOVING);
         }
     }
     
-    if (Background::Left()) {
-        if (window->KeyDown(VK_RIGHT)) {
-            Translate(130.0f * gameTime, 0);
-            if (x >= window->CenterX()) Background::stoped = false;
+    if (jumpTimer.Elapsed(0.75f)) velX = 0;
+    else if ((Background::Right() || Background::Left()) && hiting) Translate(velX * gameTime, 0);
+    
+    if (jumping) {
+        if (jumpTimer.Elapsed(0.5f)) {
+            velY = 400.0f;
+            jumping = false;
         }
-        if (window->KeyDown(VK_LEFT)) {
-            Translate(-130.0f * gameTime, 0);
+        else {
+            velY += 1570.0f * gameTime;
         }
     }
+    else velY = 400.0f;
 
-    if (window->KeyPress('O')) Background::stoped = true;
-
+    Translate(0, velY * gameTime);
     if (window->KeyPress('P')) Background::stoped = false;
 
-    // ação da gravidade sobre o personagem
-    //if (gravity == NORMAL)    
-    //    Translate(0, 300 * gameTime);
-    //else
-    //    Translate(0, -300 * gameTime);
+    if (x <= 16) MoveTo(16.0f, y);
+    if (x >= 944) MoveTo(944, y);
 
     // atualiza animação
     anim->Select(gravity);

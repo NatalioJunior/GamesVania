@@ -1,14 +1,17 @@
+#ifndef _HIT_BOX_H_
+#define _HIT_BOX_H_
+
+// ---------------------------------------------------------------------------------
 #include "Object.h"
-#include "Scene.h"
-#include "Player.h"
+#include "Timer.h"
+
+// ---------------------------------------------------------------------------------
 
 class HitBox : public Object {
 private:
-	const float LifeTime = 1.5f;
-	const float velX = 150.0f;
-	uint PlayerDirection;
-	Scene* scene = nullptr;
-	Player* player = nullptr;
+	const float velX	= 50.0f;
+	Timer		LifeTime;
+	uint		PlayerDirection;
 
 public:
 	HitBox();
@@ -20,5 +23,7 @@ public:
 };
 // ---------------------------------------------------------------------------------
 // Função Membro Inline
-inline HitBox::~HitBox() {};
+inline HitBox::~HitBox() {}
 inline void HitBox::Draw() {};
+
+#endif

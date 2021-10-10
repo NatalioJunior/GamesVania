@@ -1,16 +1,6 @@
-/**********************************************************************************
-// Platform (Arquivo de Cabeçalho)
-// 
-// Criação:     21 Abr 2012
-// Atualização: 27 Set 2021
-// Compilador:  Visual C++ 2019
-//
-// Descrição:   Plataformas do jogo
-//
-**********************************************************************************/
 
-#ifndef _GRAVITYGUY_PLATFORM_H_
-#define _GRAVITYGUY_PLATFORM_H_
+#ifndef _GAMESVANIA_PLATFORM_H_
+#define _GAMESVANIA_PLATFORM_H_
 
 // ---------------------------------------------------------------------------------
 
@@ -20,7 +10,8 @@
 
 // ---------------------------------------------------------------------------------
 
-enum PLATTYPES { SMALL, MEDIUM, LARGE, FINISH };
+enum PLATBREADTH { SMALL, MEDIUM, LONNG, LARGE };
+enum PLATTYPE    { MARIO, TETRIS, PACMAN };
 
 // ---------------------------------------------------------------------------------
 
@@ -31,11 +22,14 @@ private:
     Color color;                            // cor da plataforma
 
 public:
+    uint PlatformType = 0;
     Platform(float posX, float posY, 
-             uint platType, 
+             uint platType,
+             uint platBreadth,
              Color tint);                   // construtor    
     ~Platform();                            // destrutor
 
+    float Top();
     void Update();                          // atualização do objeto
     void Draw();                            // desenho do objeto
 }; 
@@ -45,6 +39,9 @@ public:
 
 inline void Platform::Draw()
 { platform->Draw(x, y, z, 1.0f, 0.0f, color); }
+
+inline float Platform::Top()
+{ return y - platform->Height() / 2; }
 
 // ---------------------------------------------------------------------------------
 

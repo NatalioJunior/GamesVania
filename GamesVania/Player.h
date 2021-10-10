@@ -8,11 +8,12 @@
 #include "Types.h"                      // tipos específicos da engine
 #include "Object.h"                     // interface de Object
 #include "Animation.h"                  // animação de sprites
+#include "Timer.h"
 
 // ------------------------------------------------------------------------------
 
 enum Direction  {LEFT, RIGHT};
-enum Movement   {STILL, WALKING, JUMPING, CROUCHED, HITING};
+enum Movement   { STILL, WALKING };
 enum Gravity    {NORMAL, INVERTED};
 
 // ---------------------------------------------------------------------------------
@@ -25,8 +26,14 @@ private:
     uint        movement;               // movimento que o player está realizando
     uint        gravity;
     int         level;                  // nível finalizado
+
+    Timer       jumpTimer;
+    bool        jumping = false;
+    float       velY    = 0;
+    float       velX    = 0;
     
 public:
+    bool        hiting  = false;
     uint        direction;              // direção que o player está seguindo
 
     Player();                           // construtor
@@ -49,7 +56,7 @@ inline int Player::Level()
 { return level; }
 
 inline float Player::Bottom()
-{ return y + tileset->Height()/2; }
+{ return y + tileset->Height()/4; }
 
 inline float Player::Top()
 { return y - tileset->Height()/2; }

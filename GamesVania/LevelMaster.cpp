@@ -76,6 +76,7 @@ void Home::Init()
     backg = new Sprite("Resources/TitleScreen.png");
     tileset = new TileSet("Resources/PressEnter.png", 72, 48, 1, 5);
     anim = new Animation(tileset, 0.180f, true);
+    LevelMaster::audio->Volume(MENU, 0);
     LevelMaster::audio->Play(MENU, true);
 }
 
@@ -138,7 +139,7 @@ void Level1::Init()
 
     Platform* plat;
     float posX, posY;
-    uint  platType;
+    uint  platType, platBreadth;
     Color white{ 1,1,1,1 };
 
     ifstream fin;
@@ -150,8 +151,8 @@ void Level1::Init()
         if (fin.good())
         {
             // lê linha com informações da plataforma
-            fin >> posY; fin >> platType;
-            plat = new Platform(posX, posY, platType, white);
+            fin >> posY; fin >> platType; fin >> platBreadth;
+            plat = new Platform(posX, posY, platType, platBreadth, white);
             scene->Add(plat, STATIC);
         }
         else
@@ -244,7 +245,7 @@ void Level2::Init()
 
     Platform* plat;
     float posX, posY;
-    uint  platType;
+    uint  platType, platBreadth;
 
     ifstream fin;
     fin.open("Level2.txt");
@@ -255,8 +256,8 @@ void Level2::Init()
         if (fin.good())
         {
             // lê linha com informações da plataforma
-            fin >> posY; fin >> platType;
-            plat = new Platform(posX, posY, platType, dark);
+            fin >> posY; fin >> platType; fin >> platBreadth;
+            plat = new Platform(posX, posY, platType, platBreadth, dark);
             scene->Add(plat, STATIC);
         }
         else

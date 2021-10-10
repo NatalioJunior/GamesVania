@@ -8,7 +8,6 @@ bool Background::stoped     = false;
 
 Background::Background(Color tint) : color(tint)
 {
-    MoveTo(window->CenterX(), window->CenterY(), Layer::BACK);
     // carrega imagens
     imgF = new Image("Resources/camera.jpg");
 
@@ -16,6 +15,7 @@ Background::Background(Color tint) : color(tint)
     sky     = new Sprite("Resources/Sky.png");    
     backgF1 = new Sprite(imgF);
 
+    MoveTo(window->CenterX() + imgF->Width() / 4.0f - 3.0f, window->CenterY(), Layer::BACK);
     xF = x;
     xRight = xF + imgF->Width() / 2.0f;
     xLeft = xF - imgF->Width() / 2.0f;
